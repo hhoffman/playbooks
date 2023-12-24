@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: localhost, docker-*
   become: true
   vars:
     container_count: 4
