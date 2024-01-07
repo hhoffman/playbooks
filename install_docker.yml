@@ -5,7 +5,7 @@
     container_count: 4
     default_container_name: docker
     default_container_image: ubuntu
-    default_container_command: sleep 1d
+    default_container_command: sleep 1h
 
   tasks:
     - name: Install aptitude
@@ -26,17 +26,18 @@
           - python3-setuptools
         state: latest
         update_cache: true
-
-    - name: Add Docker GPG apt Key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
+        
+    - name: Add Hashicorp Stable APT repository
+      ansible.builtin.deb822_repository:
+        name: hashicorp
+        types: [deb]
+        uris: "https://apt.releases.hashicorp.com"
+        signed_by: "https://apt.releases.hashicorp.com/gpg"
+        suites: ["{{ ansible_distribution_release|lower }}"]
+        components: [main]
         state: present
-
-    - name: Add Docker Repository
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu jammy stable
-        state: present
-
+        enabled: yes
+    
     - name: Update apt and install docker-ce
       apt:
         name: docker-ce
